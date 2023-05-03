@@ -17,13 +17,22 @@ const MovieDetails = () => {
   const { movieId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const backLinkHref = location.state?.from ?? '/movies';
+  const backLinkHref = location.state?.from ?? '/';
 
   const { poster, title, releaseYear, userScore, overview, genres } =
     movie ?? {};
 
   useEffect(() => {
-    fetchMovieDetails(movieId).then(setMovie);
+    const fetchMovie = async () => {
+      try {
+        const fetchedMovie = await fetchMovieDetails(movieId);
+        setMovie(fetchedMovie);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchMovie();
   }, [movieId]);
 
   const backToMovies = () => {
@@ -55,12 +64,12 @@ const MovieDetails = () => {
 
           <InfoList>
             <li>
-              <InfoLink to={'cast'} state={{ from: location?.state?.from }}>
+              <InfoLink to={'cast'} state={{ from: backLinkHref }}>
                 Cast
               </InfoLink>
             </li>
             <li>
-              <InfoLink to={'reviews'} state={{ from: location?.state?.from }}>
+              <InfoLink to={'reviews'} state={{ from: backLinkHref }}>
                 Reviews
               </InfoLink>
             </li>

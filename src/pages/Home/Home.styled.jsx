@@ -69,13 +69,3 @@ export const MovieTitle = styled.div`
   font-size: 10px;
   color: #3f51b5;
 `;
-
-export const exportedElements = {
-  HomeContainer,
-  HomeTitle,
-  MovieList,
-  MovieItem,
-  MovieLink,
-  Img,
-  MovieTitle,
-};

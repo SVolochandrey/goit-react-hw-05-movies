@@ -8,7 +8,15 @@ const Reviews = () => {
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
-    fetchMovieReviews(movieId).then(setReviews);
+    const fetchReviews = async () => {
+      try {
+        const data = await fetchMovieReviews(movieId);
+        setReviews(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchReviews();
   }, [movieId]);
 
   return (
@@ -23,7 +31,7 @@ const Reviews = () => {
           ))}
         </ul>
       ) : (
-        <p>We don't have any reviews for this movie</p>
+        <p>Loading...</p>
       )}
     </ReviewsContainer>
   );

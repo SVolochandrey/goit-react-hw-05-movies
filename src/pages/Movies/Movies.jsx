@@ -1,17 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useLocation } from 'react-router-dom';
 import { fetchByQuery } from '../../API';
-import {
-  FormDiv,
-  Form,
-  Input,
-  Button,
-  MovieList,
-  MovieItem,
-  MovieLink,
-  Img,
-  MovieTitle,
-} from './Movies.styled';
+import { FormDiv, Form, Input, Button } from './Movies.styled';
+import MoviesListComponent from '../../components/MoviesList/MoviesList';
 
 const Movies = () => {
   const [query, setQuery] = useState('');
@@ -47,18 +38,7 @@ const Movies = () => {
         </Form>
       </FormDiv>
       {movies.length > 0 && (
-        <MovieList>
-          {movies.map(({ id, title, poster }) => (
-            <MovieItem key={id}>
-              <MovieLink to={`/movies/${id}`} state={{ from: location }}>
-                <Img src={poster} alt={title} />
-                <MovieTitle>
-                  <h3>{title}</h3>
-                </MovieTitle>
-              </MovieLink>
-            </MovieItem>
-          ))}
-        </MovieList>
+        <MoviesListComponent movies={movies} location={location} />
       )}
     </>
   );

@@ -17,12 +17,20 @@ const Cast = () => {
   const [credits, setCredits] = useState([]);
 
   useEffect(() => {
-    fetchMovieCredits(movieId).then(setCredits);
+    const fetchCredits = async () => {
+      try {
+        const data = await fetchMovieCredits(movieId);
+        setCredits(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchCredits();
   }, [movieId]);
 
   return (
     <CastContainer>
-      {credits.length > 0 && (
+      {credits.length > 0 ? (
         <CastList>
           {credits.map(({ id, name, character, photo }) => {
             return (
@@ -36,6 +44,8 @@ const Cast = () => {
             );
           })}
         </CastList>
+      ) : (
+        <p>Loading...</p>
       )}
     </CastContainer>
   );
