@@ -2,19 +2,21 @@ import { useEffect, useState } from 'react';
 import { fetchTrending } from '../../API';
 import MovieListComponent from 'components/MoviesList/MoviesList';
 import { HomeContainer, HomeTitle } from './Home.styled';
+import Loader from 'components/Loader/Loader';
 
 const Home = () => {
-  const [movies, setMovies] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [movies, setMovies] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [onError, setOnError] = useState('');
 
   useEffect(() => {
+    setIsLoading(true);
     const fetchMovies = async () => {
       try {
         const trendingMovies = await fetchTrending();
         setMovies(trendingMovies);
       } catch (error) {
-        setError(error);
+        setOnError(error);
       } finally {
         setIsLoading(false);
       }
@@ -23,18 +25,12 @@ const Home = () => {
     fetchMovies();
   }, []);
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
-
-  if (error) {
-    return <p>Sorry, something went wrong: {error.message}</p>;
-  }
-
   return (
     <HomeContainer>
       <HomeTitle>Trending today</HomeTitle>
-      {movies.length > 0 && <MovieListComponent movies={movies} />}
+      {isLoading && <Loader />}
+      {onError && <p>Something went wrong!</p>}
+      {movies && <MovieListComponent movies={movies} />}
     </HomeContainer>
   );
 };

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import noPhoto from './components/Images/backJPG.png';
 
 axios.defaults.baseURL = 'https://api.themoviedb.org/3';
 axios.defaults.params = {
@@ -7,16 +6,14 @@ axios.defaults.params = {
   include_adults: false,
 };
 
-const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w200/';
-
 export const fetchTrending = async () => {
   return axios
     .get(`/trending/all/day?`)
     .then(({ data: { results } }) =>
-      results.map(({ id, title, poster_path: poster }) => ({
+      results.map(({ id, title, poster_path }) => ({
         id,
         title,
-        poster: IMAGE_BASE_URL + poster,
+        poster: poster_path,
       }))
     )
     .catch(error => {
@@ -31,7 +28,7 @@ export const fetchByQuery = async query => {
       results.map(({ id, title, poster_path: poster }) => ({
         id,
         title,
-        poster: IMAGE_BASE_URL + poster,
+        poster,
       }))
     )
     .catch(error => {
@@ -55,7 +52,7 @@ export const fetchMovieDetails = movieId => {
         },
       }) => ({
         id,
-        poster: IMAGE_BASE_URL + poster,
+        poster,
         title,
         releaseYear: new Date(releaseYear).getFullYear(),
         userScore: Math.round(userScore * 10),
@@ -72,11 +69,11 @@ export const fetchMovieCredits = movieId => {
   return axios
     .get(`/movie/${movieId}/credits?`)
     .then(({ data: { cast } }) =>
-      cast.map(({ id, name, character, profile_path: photo }) => ({
+      cast.map(({ id, name, character, profile_path: poster }) => ({
         id,
         name,
         character,
-        photo: photo ? IMAGE_BASE_URL + photo : noPhoto,
+        poster,
       }))
     )
     .catch(error => {

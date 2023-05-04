@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { fetchMovieDetails } from '../../API';
+import Loader from 'components/Loader/Loader';
 import {
   Btn,
   MovieContainer,
@@ -14,21 +15,26 @@ import {
 
 const MovieDetails = () => {
   const [movie, setMovie] = useState(null);
+  const [onError, setOnError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { movieId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const backLinkHref = location.state?.from ?? '/';
 
-  const { poster, title, releaseYear, userScore, overview, genres } =
+  const { poster, title, original_title, releaseYear, userScore, overview, genres } =
     movie ?? {};
 
   useEffect(() => {
+    setIsLoading(true);
     const fetchMovie = async () => {
       try {
         const fetchedMovie = await fetchMovieDetails(movieId);
         setMovie(fetchedMovie);
       } catch (error) {
-        console.error(error);
+        setOnError(error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -44,13 +50,24 @@ const MovieDetails = () => {
       <Btn type="button" onClick={backToMovies}>
         Back to movies
       </Btn>
+      {isLoading && <Loader />}
+      {onError && (
+        <p>We are sorry. Something went wrong. Please try again later</p>
+      )}
       {movie && (
         <div>
           <MovieContainer>
-            <Img src={poster} alt={title} />
+            <Img
+              src={
+                poster
+                  ? `https://image.tmdb.org/t/p/w200/${poster}`
+                  : 'https://naked-science.ru/wp-content/uploads/2016/04/article_face.jpg'
+              }
+              alt={title}
+            />
             <MovieInfo>
               <MovieTitle>
-                {title} ({releaseYear})
+                {title || original_title} ({releaseYear})
               </MovieTitle>
               <p>User Score: {userScore}%</p>
               <h3>Overview</h3>
